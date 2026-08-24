@@ -1,0 +1,13 @@
+{
+  "name": "dependabot-package-vulns-discord-webhook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "type": "module",
+  "devDependencies": {},
+  "dependencies": {
+    "@octokit/core": "^7.0.7"
+  }
+}
