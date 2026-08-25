@@ -1,19 +1,34 @@
 import { Octokit } from "@octokit/core";
+import fs from "fs";
 
 const client = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
 async function run() {
-  const data = [
-    { owner: "lannonbr", repo: "product-age" },
-    { owner: "lannonbr", repo: "tcg-tracker" },
-  ];
+  if (!fs.existsSync("repos.txt")) {
+    console.error(
+      "Error: Please generate a repos.txt file in this directory which is a listing of repos you wish to track.",
+    );
+    process.exit(1);
+  }
 
-  for (let repo of data) {
+  if (process.env.GITHUB_TOKEN === undefined) {
+    console.error(
+      "Error: GitHub access token not found. Please insert it into the session with the GITHUB_TOKEN env variable.",
+    );
+    process.exit(1);
+  }
+  const repos = fs
+    .readFileSync("repos.txt")
+    .toString()
+    .split("\n")
+    .map((line) => line.split("/"));
+
+  for (let [owner, repo] of repos) {
     const result = await client.request(
       "GET /repos/{owner}/{repo}/dependabot/alerts",
       {
-        owner: repo.owner,
-        repo: repo.repo,
+        owner,
+        repo,
         state: "open",
         headers: {
           "X-GitHub-Api-Version": "2026-03-10",
@@ -21,8 +36,9 @@ async function run() {
       },
     );
 
-    if (result.data.length > 0) {
-      const body = `Repo ${repo.owner}/${repo.repo} has ${result.data.length} open findings. To explore the findings, visit https://github.com/${repo.owner}/${repo.repo}/security/dependabot`;
+    const alertsCount = result.data.length;
+    if (alertsCount > 0) {
+      const body = `Repo ${owner}/${repo} has ${alertsCount} open findings. To explore the findings, visit https://github.com/${owner}/${repo}/security/dependabot`;
 
       await fetch(process.env.DISCORD_WEBHOOK_URL, {
         method: "POST",
