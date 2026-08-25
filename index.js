@@ -1,8 +1,6 @@
 import { Octokit } from "@octokit/core";
 import fs from "fs";
 
-const client = new Octokit({ auth: process.env.GITHUB_TOKEN });
-
 async function run() {
   if (!fs.existsSync("repos.txt")) {
     console.error(
@@ -17,6 +15,9 @@ async function run() {
     );
     process.exit(1);
   }
+
+  const client = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
   const repos = fs
     .readFileSync("repos.txt")
     .toString()
