@@ -22,6 +22,7 @@ async function run() {
     .readFileSync("repos.txt")
     .toString()
     .split("\n")
+    .filter((line) => line.length > 0)
     .map((line) => line.split("/"));
 
   for (let [owner, repo] of repos) {
