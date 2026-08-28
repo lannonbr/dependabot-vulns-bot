@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dependabot-vulns-bot
+spec:
+  schedule: "0 8 * * Fri"
+  timeZone: "America/New_York"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: dependabot-vulns-bot
+              image: ghcr.io/lannonbr/dependabot-vulns-bot:main
+              volumeMounts:
+                - name: repos
+                  mountPath: /opt/repos.txt
+                  subPath: repos.txt
+              envFrom:
+                - secretRef:
+                    name: dependabot-vulns-bot
+          volumes:
+            - name: repos
+              configMap:
+                name: dependabot-repos-list

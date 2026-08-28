@@ -20,4 +20,4 @@ vercel/next.js
 - Add the env vars to either a `.env` and then use the `--env-file` node flag or just add it to your session env via a bashrc/zshrc file.
 - `node index.js`
 
-Future work is going to include running this on a schedule via a Kubernetes CronJob, but could also be run directly via cron as well.
+If you wish to run this on a schedule via a Kubernetes CronJob, run the deploy.sh script. Make sure to download the docker container stored at `ghcr.io/lannonbr/dependabot-vulns-bot:main` or make sure your Kubernetes cluster is authenticated to `ghcr.io`. This script also can also be run directly via cron or other scheduling services.
